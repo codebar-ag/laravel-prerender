@@ -1,5 +1,11 @@
-Laravel Prerender [![Build Status](https://travis-ci.org/JeroenNoten/Laravel-Prerender.svg?branch=master)](https://travis-ci.org/JeroenNoten/Laravel-Prerender)
+Laravel 8 | Prerender.io [![Build Status](https://travis-ci.org/codebar-ag/Laravel-Prerender.svg?branch=master)](https://travis-ci.org/github/codebar-ag/Laravel-Prerender)
 =========================== 
+
+## Credits
+
+This package was initially cloned from [jeroennoten/Laravel-Prerender](https://github.com/jeroennoten/Laravel-Prerender). The author was [jeroennoten](https://github.com/jeroennoten). Laravel 8 Support was provided by [CasperLaiTW](https://github.com/CasperLaiTW) via an unmerged Pull-Request.
+
+## Introduction
 
 Google, Facebook, Twitter, Yahoo, and Bing are constantly trying to view your website... but they don't execute javascript. That's why Prerender was built. Prerender is perfect for AngularJS SEO, BackboneJS SEO, EmberJS SEO, and any other javascript framework.
 
@@ -77,13 +83,13 @@ Note that this is the full request URI, so including starting slash and query pa
 
 ## Contributing
 
-I love any contributions! Feel free to create issues or pull requests.
+ Feel free to create issues or pull requests.
 
 ## License
 
 The MIT License (MIT)
 
-Copyright (c) 2014 Jeroen Noten
+Copyright (c) 2020 codebar AG
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
