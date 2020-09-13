@@ -1,9 +1,12 @@
-Laravel 8 | Prerender.io [![Build Status](https://travis-ci.org/codebar-ag/Laravel-Prerender.svg?branch=master)](https://travis-ci.org/github/codebar-ag/Laravel-Prerender)
+Laravel | Prerender.io [![Build Status](https://travis-ci.org/codebar-ag/Laravel-Prerender.svg?branch=master)](https://travis-ci.org/github/codebar-ag/Laravel-Prerender)
 =========================== 
 
 ## Credits
+The Laravel-Prerender package was initially cloned from [jeroennoten/Laravel-Prerender](https://github.com/jeroennoten/Laravel-Prerender). The author was [jeroennoten](https://github.com/jeroennoten). Laravel 8 Support was provided by [CasperLaiTW](https://github.com/CasperLaiTW) via an unmerged (14th September 2020) Pull-Request.
 
-This package was initially cloned from [jeroennoten/Laravel-Prerender](https://github.com/jeroennoten/Laravel-Prerender). The author was [jeroennoten](https://github.com/jeroennoten). Laravel 8 Support was provided by [CasperLaiTW](https://github.com/CasperLaiTW) via an unmerged Pull-Request.
+## Laravel Support
+This package currently only supports >= Laravel 6 && >= PHP 5.5.9 If you're looking for an older version checkout [jeroennoten/Laravel-Prerender](https://github.com/jeroennoten/Laravel-Prerender).
+
 
 ## Introduction
 
