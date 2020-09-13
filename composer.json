@@ -1,0 +1,34 @@
+
+{
+    "name": "codebar-ag/laravel-prerender",
+    "description": "Laravel middleware for prerendering javascript-rendered pages on the fly for SEO",
+    "keywords": ["laravel", "prerender"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "codebar AG",
+            "email": "hi@codebar.ch"
+        }
+    ],
+    "require": {
+        "php": ">=7.3",
+        "illuminate/support": "^8.0",
+        "guzzlehttp/guzzle": "^7.0",
+        "symfony/psr-http-message-bridge": "^1.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "CodebarAg\\LaravelPrerender\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "CodebarAg\\LaravelPrerender\\LaravelPrerenderServiceProvider"
+            ]
+        }
+    }
+}
