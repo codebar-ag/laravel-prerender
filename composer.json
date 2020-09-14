@@ -17,11 +17,17 @@
         "symfony/psr-http-message-bridge": "^1.0"
     },
     "require-dev": {
+        "orchestra/testbench": "^4.0|^5.0|^6.0",
         "phpunit/phpunit": "^8.4|^9.0"
     },
     "autoload": {
         "psr-4": {
             "CodebarAg\\LaravelPrerender\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "CodebarAg\\LaravelPrerender\\Tests\\": "tests/"
         }
     },
     "extra": {
