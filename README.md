@@ -1,4 +1,4 @@
-Laravel | Prerender.io [![Build Status](https://travis-ci.org/codebar-ag/Laravel-Prerender.svg?branch=master)](https://travis-ci.org/github/codebar-ag/Laravel-Prerender)
+Laravel | Prerender.io ![Tests](https://github.com/codebar-ag/Laravel-Prerender/workflows/Tests/badge.svg)
 =========================== 
 
 ## Credits
