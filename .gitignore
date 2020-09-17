@@ -1,8 +1,8 @@
-/vendor
-composer.phar
-composer.lock
 .DS_Store
-.phpunit.result.cache
 .idea
-/.idea
-
+.phpunit.result.cache
+build
+composer.lock
+coverage
+docs
+vendor
