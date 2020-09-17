@@ -1,6 +1,8 @@
 <?php
 
-namespace CodebarAg\Tests;
+namespace CodebarAg\LaravelPrerender\Tests;
+
+use PHPUnit\Framework\TestCase;
 
 class ExampleTest extends TestCase
 {
