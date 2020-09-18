@@ -20,11 +20,10 @@ Prerender adheres to google's `_escaped_fragment_` proposal, which we recommend 
 
 ## Installation
 
-Require this package run: `composer require codebar-ag/laravel-prerender`
-
-After installing, add the ServiceProvider to the providers array in `config/app.php`.
-
-    'CodebarAg\LaravelPrerender\LaravelPrerenderServiceProvider',
+Require this package run:
+```
+composer require codebar-ag/laravel-prerender
+```
 
 If you want to make use of the prerender.io service, add the following to your `.env` file:
 
@@ -53,7 +52,7 @@ This may be useful for your local development environment.
 
 To customize the whitelist and the blacklist, you first have to publish the configuration file:
 
-    $ php artisan vendor:publish
+    $ php artisan vendor:publish --provider="CodebarAg\LaravelPrerender\LaravelPrerenderServiceProvider"
 
 ### Whitelist
 
