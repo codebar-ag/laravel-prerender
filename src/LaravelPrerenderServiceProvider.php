@@ -14,7 +14,7 @@ class LaravelPrerenderServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->publishes([
-            __DIR__ . '/../config/prerender.php' => config_path('prerender.php')
+            __DIR__ . '/../config/prerender.php' => config_path('prerender.php'),
         ], 'config');
 
         if ($this->app['config']->get('prerender.enable')) {
@@ -33,5 +33,4 @@ class LaravelPrerenderServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom(__DIR__ . '/../config/prerender.php', 'prerender');
     }
-
 }
