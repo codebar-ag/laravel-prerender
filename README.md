@@ -2,16 +2,13 @@ Laravel | Prerender.io ![Tests](https://github.com/codebar-ag/Laravel-Prerender/
 =========================== 
 
 ## Credits
-The Laravel-Prerender package was initially cloned from [jeroennoten/Laravel-Prerender](https://github.com/jeroennoten/Laravel-Prerender). The author was [jeroennoten](https://github.com/jeroennoten). Laravel 6,7 & 8 Support was provided by [CasperLaiTW](https://github.com/CasperLaiTW) via an unmerged (14th September 2020) Pull-Request.
+This package is a clone from [jeroennoten/Laravel-Prerender](https://github.com/jeroennoten/Laravel-Prerender) with [jeroennoten](https://github.com/jeroennoten) as author. [CasperLaiTW](https://github.com/CasperLaiTW) provided Laravel 6,7 & 8 Support by an unmerged (14th September 2020) Pull-Request.
 
 ## Laravel Support
 This package currently only supports >= Laravel 6 && >= PHP 5.5.9 If you're looking for an older version checkout [jeroennoten/Laravel-Prerender](https://github.com/jeroennoten/Laravel-Prerender).
 
 ## Introduction
-
-Google, Facebook, Twitter, Yahoo, and Bing are constantly trying to view your website... but they don't execute javascript. That's why Prerender was built. Prerender is perfect for AngularJS SEO, BackboneJS SEO, EmberJS SEO, and any other javascript framework.
-
-This middleware intercepts requests to your Laravel website or application from crawlers, and then makes a call to the (external) Prerender Service to get the static HTML instead of the javascript for that page.
+Modern search engines like Google are constantly trying to visit and render your website. Unfortunately, they don't execute javascript. So the content of your website is not getting indexed. Prerender helps you out there. A middleware intercepts requests to your Laravel website or application from crawlers. It then makes a call to the external Prerender Service to get the static HTML instead of the javascript for that page. It is a perfect match for Vue JS, Angular JS, Backbone JS, Ember JS and any other Javascript Framework.
 
 Prerender adheres to google's `_escaped_fragment_` proposal, which we recommend you use. It's easy:
 - Just add `<meta name="fragment" content="!">` to the `<head>` of all of your pages
@@ -23,6 +20,12 @@ Prerender adheres to google's `_escaped_fragment_` proposal, which we recommend 
 Require this package run:
 ```
 composer require codebar-ag/laravel-prerender
+```
+
+Apply the Prerender Middleware to your app/Http/Middleware/Kernel.php or routes/web.php
+
+```
+CodebarAg\LaravelPrerender\PrerenderMiddleware;
 ```
 
 If you want to make use of the prerender.io service, add the following to your `.env` file:
@@ -49,7 +52,6 @@ This may be useful for your local development environment.
 3. Return the HTML to the crawler
 
 # Customization
-
 To customize the whitelist and the blacklist, you first have to publish the configuration file:
 
     $ php artisan vendor:publish --provider="CodebarAg\LaravelPrerender\LaravelPrerenderServiceProvider"
@@ -88,7 +90,7 @@ Please see [CONTRIBUTING](.github/CONTRIBUTING.md) for details.
 
 ## Security
 
-If you discover any security related issues, please email freek@spatie.be instead of using the issue tracker.
+If you discover any security related issues, please email helpdesk@codebar.ch instead of using the issue tracker.
 
 ## License
 
