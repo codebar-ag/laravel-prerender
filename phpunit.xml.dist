@@ -10,6 +10,11 @@
          stopOnFailure="false"
          verbose="true"
 >
+    <coverage>
+        <include>
+            <directory suffix=".php">src/</directory>
+        </include>
+    </coverage>
     <testsuites>
         <testsuite name="codebar Test Suite">
             <directory>tests</directory>
