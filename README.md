@@ -1,4 +1,4 @@
-Laravel | Prerender.io ![Tests](https://github.com/codebar-ag/Laravel-Prerender/workflows/Tests/badge.svg)
+Laravel | Prerender.io ![Tests](https://github.com/codebar-ag/Laravel-Prerender/workflows/Tests/badge.svg) ![codecov.io](https://codecov.io/github/codebar-ag/Laravel-Prerender/coverage.svg?branch=master)
 =========================== 
 
 ## Credits
