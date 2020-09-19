@@ -135,13 +135,14 @@ class PrerenderMiddleware
     /**
      * Returns whether the request must be prerendered.
      *
-     * @param $request
+     * @param \Illuminate\Http\Request $request
      * @return bool
      */
     private function shouldShowPrerenderedPage($request)
     {
         $userAgent = strtolower($request->server->get('HTTP_USER_AGENT'));
         $bufferAgent = $request->server->get('X-BUFFERBOT');
+
         $requestUri = $request->getRequestUri();
         $referer = $request->headers->get('Referer');
 

@@ -4,6 +4,10 @@ namespace CodebarAg\LaravelPrerender\Tests;
 
 use CodebarAg\LaravelPrerender\LaravelPrerenderServiceProvider;
 use CodebarAg\LaravelPrerender\PrerenderMiddleware;
+use GuzzleHttp\Client;
+use GuzzleHttp\Handler\MockHandler;
+use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Psr7\Response;
 use Illuminate\Foundation\Http\Kernel;
 use Illuminate\Support\Facades\Route;
 
@@ -22,8 +26,6 @@ class TestCase extends \Orchestra\Testbench\TestCase
         parent::setUp();
 
         $this->setupRoutes();
-
-        config()->set('prerender.crawler_user_agents', ['symfony']);
     }
 
     /**
@@ -44,6 +46,16 @@ class TestCase extends \Orchestra\Testbench\TestCase
     protected function getEnvironmentSetUp($app)
     {
         $app->make(Kernel::class)->prependMiddleware(PrerenderMiddleware::class);
+
+        // mock guzzle client
+        $app->bind(Client::class, function () {
+            $mock = new MockHandler([
+                new Response(200, ['prerender.io-mock' => true]),
+            ]);
+            $stack = HandlerStack::create($mock);
+
+            return new Client(['handler' => $stack]);
+        });
     }
 
     /**
@@ -51,6 +63,10 @@ class TestCase extends \Orchestra\Testbench\TestCase
      */
     protected function setupRoutes()
     {
+        Route::get('test-middleware', function () {
+            return 'GET - Success';
+        });
+
         Route::post('test-middleware', function () {
             return 'Success';
         });
