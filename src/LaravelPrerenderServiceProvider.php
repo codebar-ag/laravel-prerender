@@ -30,7 +30,8 @@ class LaravelPrerenderServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->mergeConfigFrom(
-            __DIR__ . '/../config/prerender.php', 'prerender'
+            __DIR__ . '/../config/prerender.php',
+            'prerender'
         );
     }
 }
