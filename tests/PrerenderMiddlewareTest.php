@@ -53,7 +53,7 @@ class PrerenderMiddlewareTest extends TestCase
     }
 
     /** @test */
-    public function it_should_not_prrender_page_on_non_get_request()
+    public function it_should_not_prerender_page_on_non_get_request()
     {
         $this->allowSymfonyUserAgent();
 
@@ -63,7 +63,7 @@ class PrerenderMiddlewareTest extends TestCase
     }
 
     /** @test */
-    public function it_should_not_prerender_page_when_missing_useg_agent()
+    public function it_should_not_prerender_page_when_missing_user_agent()
     {
         $this->get('/test-middleware', ['User-Agent' => null])
             ->assertHeaderMissing('prerender.io-mock')
