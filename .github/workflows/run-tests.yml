@@ -1,4 +1,4 @@
-name: Tests
+name: run-tests
 
 on: [push, pull_request]
 
@@ -54,4 +54,4 @@ jobs:
           composer update --${{ matrix.dependency-version }} --prefer-dist --no-interaction --no-suggest
 
       - name: Execute tests
-        run: vendor/bin/phpunit --coverage-clover=coverage.xml
+        run: vendor/bin/phpunit
