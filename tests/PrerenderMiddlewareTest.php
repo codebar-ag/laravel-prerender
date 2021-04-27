@@ -4,9 +4,7 @@ namespace CodebarAg\LaravelPrerender\Tests;
 
 class PrerenderMiddlewareTest extends TestCase
 {
-    /**
-     * @test
-     */
+    /** @test */
     public function it_should_prerender_page_on_get_request()
     {
         $this->allowSymfonyUserAgent();
@@ -16,9 +14,7 @@ class PrerenderMiddlewareTest extends TestCase
             ->assertSuccessful();
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function it_should_not_prerender_page_when_user_agent_does_not_in_list()
     {
         $this->get('/test-middleware')
@@ -27,9 +23,7 @@ class PrerenderMiddlewareTest extends TestCase
             ->assertSee('GET - Success');
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function it_should_prerender_page_with_escaped_fragment_in_query_string()
     {
         $this->get('/test-middleware?_escaped_fragment_')
@@ -37,32 +31,28 @@ class PrerenderMiddlewareTest extends TestCase
             ->assertSuccessful();
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function it_should_prerender_page_with_url_in_whitelist()
     {
         config()->set('prerender.whitelist', ['/test-middleware*']);
+
         $this->get('/test-middleware?_escaped_fragment_')
             ->assertHeader('prerender.io-mock', true)
             ->assertSuccessful();
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function is_should_not_prerender_page_in_blacklist()
     {
         config()->set('prerender.blacklist', ['/test-middleware*']);
+
         $this->get('/test-middleware?_escaped_fragment_')
             ->assertSuccessful()
             ->assertHeaderMissing('prerender.io-mock')
             ->assertSee('GET - Success');
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function it_should_not_prrender_page_on_non_get_request()
     {
         $this->allowSymfonyUserAgent();
@@ -72,9 +62,7 @@ class PrerenderMiddlewareTest extends TestCase
             ->assertSee('Success');
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function it_should_not_prerender_page_when_missing_useg_agent()
     {
         $this->get('/test-middleware', ['User-Agent' => null])
@@ -82,9 +70,6 @@ class PrerenderMiddlewareTest extends TestCase
             ->assertSee('GET - Success');
     }
 
-    /**
-     *
-     */
     private function allowSymfonyUserAgent()
     {
         config()->set('prerender.crawler_user_agents', ['symfony']);
