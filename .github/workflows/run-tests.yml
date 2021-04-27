@@ -58,12 +58,3 @@ jobs:
 
       - name: Execute tests
         run: vendor/bin/phpunit --coverage-clover=coverage.xml
-
-      - name: Upload test coverage to Codecov
-        uses: codecov/codecov-action@v1
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          file: ./coverage.xml
-          name: laravel-prerender
-          flags: P${{ matrix.php }},L${{ matrix.laravel }},${{ matrix.dependency-version }},${{ matrix.os }}
-          fail_ci_if_error: true
