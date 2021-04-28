@@ -41,12 +41,6 @@ You can install the package via composer:
 composer require codebar-ag/laravel-prerender
 ```
 
-Apply the Prerender Middleware to your app/Http/Middleware/Kernel.php or routes/web.php
-
-```php
-CodebarAg\LaravelPrerender\PrerenderMiddleware;
-```
-
 If you want to make use of the Prerender.io service, add the following to your `.env` file:
 
 ```dotenv
@@ -56,8 +50,10 @@ PRERENDER_TOKEN=token
 Or if you are using a self-hosted service, add the server address in the `.env` file.
 
 ```dotenv
-PRERENDER_URL=https://example.com
+PRERENDER_URL=https://prerender.services
 ```
+
+That's it. Every GET-Request from a crawler will be prerendered.
 
 ## ✋ Disable the service
 
@@ -339,18 +335,7 @@ PRERENDER_URL=http://localhost:3000
 http://localhost:3000/render?url=https://domain.test
 ```
 
-4. Add the `PrerenderMiddleware` to the `web.php` file. We use 
-   [Inertia](https://inertiajs.com) in this example:
-
-```php
-use CodebarAg\LaravelPrerender\PrerenderMiddleware;
-
-Route::middleware(PrerenderMiddleware::class)->get('/', function () {
-    return Inertia::render('Welcome');
-});
-```
-
-5. Test your page as a crawler. Make sure to change `domain.test` to your local
+4. Test your page as a crawler. Make sure to change `domain.test` to your local
    domain:
 
 ```shell
