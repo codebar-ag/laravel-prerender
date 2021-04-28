@@ -4,8 +4,11 @@ All notable changes to `laravel-prerender` will be documented in this file.
 
 ## Not released
 
+## 3.1.0 - 2021-04-28
+
 - Added additional [user agents](https://github.com/codebar-ag/laravel-prerender/commit/a8706a678b2f990cd1f108866c7d2b10f4b4e658)
 - Refactored
+- Moved the default branch to `main`
 
 ## 3.0.3 - 2021-02-09
 
