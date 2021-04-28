@@ -8,20 +8,13 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
+use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Http\Kernel;
 use Illuminate\Support\Facades\Route;
 
-/**
- * Class TestCase
- *
- * @package CodebarAg\LaravelPrerender\Tests
- */
 class TestCase extends \Orchestra\Testbench\TestCase
 {
-    /**
-     *
-     */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -29,11 +22,9 @@ class TestCase extends \Orchestra\Testbench\TestCase
     }
 
     /**
-     * @param \Illuminate\Foundation\Application $app
-     *
-     * @return array
+     * @param Application $app
      */
-    protected function getPackageProviders($app)
+    protected function getPackageProviders($app): array
     {
         return [
             LaravelPrerenderServiceProvider::class,
@@ -41,9 +32,9 @@ class TestCase extends \Orchestra\Testbench\TestCase
     }
 
     /**
-     * @param \Illuminate\Foundation\Application $app
+     * @param Application $app
      */
-    protected function getEnvironmentSetUp($app)
+    protected function getEnvironmentSetUp($app): void
     {
         $app->make(Kernel::class)->prependMiddleware(PrerenderMiddleware::class);
 
@@ -58,10 +49,7 @@ class TestCase extends \Orchestra\Testbench\TestCase
         });
     }
 
-    /**
-     *
-     */
-    protected function setupRoutes()
+    protected function setupRoutes(): void
     {
         Route::get('test-middleware', function () {
             return 'GET - Success';

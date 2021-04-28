@@ -2,37 +2,36 @@
 
 namespace CodebarAg\LaravelPrerender;
 
+use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Support\ServiceProvider;
 
 class LaravelPrerenderServiceProvider extends ServiceProvider
 {
-    protected $package = 'nutsweb/laravel-prerender';
-
     /**
-     * Bootstrap the application events.
-     *
-     * @return void
+     * Bootstrap any package services.
      */
-    public function boot()
+    public function boot(): void
     {
         $this->publishes([
             __DIR__ . '/../config/prerender.php' => config_path('prerender.php'),
         ], 'config');
 
-        if ($this->app['config']->get('prerender.enable')) {
-            /** @var \Illuminate\Foundation\Http\Kernel $kernel */
-            $kernel = $this->app['Illuminate\Contracts\Http\Kernel'];
+        if (config('prerender.enable')) {
+            /** @var Kernel $kernel */
+            $kernel = $this->app->make(Kernel::class);
+
             $kernel->pushMiddleware(PrerenderMiddleware::class);
         }
     }
 
     /**
-     * Register the service provider.
-     *
-     * @return void
+     * Register any application services.
      */
-    public function register()
+    public function register(): void
     {
-        $this->mergeConfigFrom(__DIR__ . '/../config/prerender.php', 'prerender');
+        $this->mergeConfigFrom(
+            __DIR__ . '/../config/prerender.php',
+            'prerender'
+        );
     }
 }

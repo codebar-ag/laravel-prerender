@@ -2,29 +2,21 @@
 
 namespace CodebarAg\LaravelPrerender;
 
-use App;
 use Closure;
 use GuzzleHttp\Client as Guzzle;
 use GuzzleHttp\Exception\RequestException;
-use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Str;
 use Psr\Http\Message\ResponseInterface;
-use Redirect;
 use Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory;
 use Symfony\Component\HttpFoundation\Response;
 
 class PrerenderMiddleware
 {
     /**
-     * The application instance
-     *
-     * @var Application
-     */
-    private $app;
-
-    /**
-     * The Guzzle Client that sends GET requests to the prerender server
+     * The Guzzle Client that sends GET requests to the prerender server.
      *
      * @var Guzzle
      */
@@ -38,50 +30,46 @@ class PrerenderMiddleware
     private $prerenderToken;
 
     /**
-     * List of crawler user agents that will be
+     * List of crawler user agents that will be.
      *
      * @var array
      */
     private $crawlerUserAgents;
 
     /**
-     * URI whitelist for prerendering pages only on this list
+     * URI whitelist for prerendering pages only on this list.
      *
      * @var array
      */
     private $whitelist;
 
     /**
-     * URI blacklist for prerendering pages that are not on the list
+     * URI blacklist for prerendering pages that are not on the list.
      *
      * @var array
      */
     private $blacklist;
 
     /**
-     * Base URI to make the prerender requests
+     * Base URI to make the prerender requests.
      *
      * @var string
      */
     private $prerenderUri;
 
     /**
-     * Return soft 3xx and 404 HTTP codes
+     * Return soft 3xx and 404 HTTP codes.
      *
      * @var string
      */
     private $returnSoftHttpCodes;
 
     /**
-     * Creates a new PrerenderMiddleware instance
-     *
-     * @param Application $app
-     * @param Guzzle $client
+     * Creates a new PrerenderMiddleware instance.
      */
-    public function __construct(Application $app, Guzzle $client)
+    public function __construct(Guzzle $client)
     {
-        $this->app = $app;
-        $this->returnSoftHttpCodes = $app['config']->get('prerender')['prerender_soft_http_codes'];
+        $this->returnSoftHttpCodes = config('prerender.prerender_soft_http_codes');
 
         if ($this->returnSoftHttpCodes) {
             $this->client = $client;
@@ -92,7 +80,7 @@ class PrerenderMiddleware
             $this->client = new Guzzle($config);
         }
 
-        $config = $app['config']->get('prerender');
+        $config = config('prerender');
 
         $this->prerenderUri = $config['prerender_url'];
         $this->crawlerUserAgents = $config['crawler_user_agents'];
@@ -104,13 +92,9 @@ class PrerenderMiddleware
     /**
      * Handles a request and prerender if it should, otherwise call the next middleware.
      *
-     * @param $request
-     * @param Closure $next
-     * @return Response
-     * @internal param int $type
-     * @internal param bool $catch
+     * @return mixed
      */
-    public function handle($request, Closure $next)
+    public function handle(Request $request, Closure $next)
     {
         if ($this->shouldShowPrerenderedPage($request)) {
             $prerenderedResponse = $this->getPrerenderedPageResponse($request);
@@ -133,11 +117,8 @@ class PrerenderMiddleware
 
     /**
      * Returns whether the request must be prerendered.
-     *
-     * @param \Illuminate\Http\Request $request
-     * @return bool
      */
-    private function shouldShowPrerenderedPage($request)
+    private function shouldShowPrerenderedPage(Request $request): bool
     {
         $userAgent = strtolower($request->server->get('HTTP_USER_AGENT'));
         $bufferAgent = $request->server->get('X-BUFFERBOT');
@@ -150,6 +131,7 @@ class PrerenderMiddleware
         if (!$userAgent) {
             return false;
         }
+
         if (!$request->isMethod('GET')) {
             return false;
         }
@@ -160,10 +142,8 @@ class PrerenderMiddleware
         }
 
         // prerender if a crawler is detected
-        foreach ($this->crawlerUserAgents as $crawlerUserAgent) {
-            if (Str::contains($userAgent, strtolower($crawlerUserAgent))) {
-                $isRequestingPrerenderedPage = true;
-            }
+        if (in_array(strtolower($userAgent), $this->crawlerUserAgents)) {
+            $isRequestingPrerenderedPage = true;
         }
 
         if ($bufferAgent) {
@@ -184,10 +164,12 @@ class PrerenderMiddleware
         // only check blacklist if it is not empty
         if ($this->blacklist) {
             $uris[] = $requestUri;
+
             // we also check for a blacklisted referer
             if ($referer) {
                 $uris[] = $referer;
             }
+
             if ($this->isListed($uris, $this->blacklist)) {
                 return false;
             }
@@ -198,16 +180,14 @@ class PrerenderMiddleware
     }
 
     /**
-     * Prerender the page and return the Guzzle Response
-     *
-     * @param $request
-     * @return null|void
+     * Prerender the page and return the Guzzle Response.
      */
-    private function getPrerenderedPageResponse($request)
+    private function getPrerenderedPageResponse(Request $request): ?ResponseInterface
     {
         $headers = [
             'User-Agent' => $request->server->get('HTTP_USER_AGENT'),
         ];
+
         if ($this->prerenderToken) {
             $headers['X-Prerender-Token'] = $this->prerenderToken;
         }
@@ -226,12 +206,13 @@ class PrerenderMiddleware
             return $this->client->get($this->prerenderUri . '/' . urlencode($protocol.'://'.$host.'/'.$path), compact('headers'));
         } catch (RequestException $exception) {
             if (!$this->returnSoftHttpCodes && !empty($exception->getResponse()) && $exception->getResponse()->getStatusCode() === 404) {
-                App::abort(404);
+                abort(404);
             }
+
             // In case of an exception, we only throw the exception if we are in debug mode. Otherwise,
             // we return null and the handle() method will just pass the request to the next middleware
             // and we do not show a prerendered page.
-            if ($this->app['config']->get('app.debug')) {
+            if (config('app.debug')) {
                 throw $exception;
             }
 
@@ -240,24 +221,17 @@ class PrerenderMiddleware
     }
 
     /**
-     * Convert a Guzzle Response to a Symfony Response
-     *
-     * @param ResponseInterface $prerenderedResponse
-     * @return Response
+     * Convert a Guzzle Response to a Symfony Response.
      */
-    private function buildSymfonyResponseFromGuzzleResponse(ResponseInterface $prerenderedResponse)
+    private function buildSymfonyResponseFromGuzzleResponse(ResponseInterface $prerenderedResponse): Response
     {
         return (new HttpFoundationFactory)->createResponse($prerenderedResponse);
     }
 
     /**
      * Check whether one or more needles are in the given list
-     *
-     * @param $needles
-     * @param $list
-     * @return bool
      */
-    private function isListed($needles, $list)
+    private function isListed($needles, array $list): bool
     {
         $needles = Arr::wrap($needles);
 
