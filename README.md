@@ -342,7 +342,7 @@ http://localhost:3000/render?url=https://domain.test
 curl -A Googlebot https://domain.test
 ```
 
-6. 🎉 You made it. You should see your prerendered html!
+6. 🎉 That's it — you should see the prerendered html!
 
 ## 📝 Changelog
 
