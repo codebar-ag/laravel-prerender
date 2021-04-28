@@ -23,9 +23,11 @@ to Prerender.io for the static HTML of that page. If not, the request will
 continue on to your normal server routes. The crawler never knows that you are
 using Prerender.io since the response always goes through your server.
 
-> Google now recommends that you use Prerender.io in their Dynamic Rendering documentation!
+> Google now recommends that you use Prerender.io in their 
+> [Dynamic Rendering](https://docs.prerender.io/article/9-google-support)
+> documentation!
 
-🔗 https://docs.prerender.io/article/9-google-support
+
 
 ## 🛠 Requirements
 
@@ -37,25 +39,25 @@ using Prerender.io since the response always goes through your server.
 
 You can install the package via composer:
 
-```bash
+```shell
 composer require codebar-ag/laravel-prerender
 ```
 
 Apply the Prerender Middleware to your app/Http/Middleware/Kernel.php or routes/web.php
 
-```
+```php
 CodebarAg\LaravelPrerender\PrerenderMiddleware;
 ```
 
 If you want to make use of the Prerender.io service, add the following to your `.env` file:
 
-```bash
+```dotenv
 PRERENDER_TOKEN=token
 ```
 
 Or if you are using a self-hosted service, add the server address in the `.env` file.
 
-```bash
+```dotenv
 PRERENDER_URL=https://example.com
 ```
 
@@ -63,7 +65,7 @@ PRERENDER_URL=https://example.com
 
 You can disable the service by adding the following to your `.env` file:
 
-```bash
+```dotenv
 PRERENDER_ENABLE=false
 ```
 
@@ -72,7 +74,7 @@ This may be useful for your local development environment.
 ## ✏️ How it works
 
 1. The middleware checks to make sure we should show a prerendered page
-	1. The middleware checks if the request is from a crawler (`_escaped_fragment_` or agent string)
+	1. The middleware checks if the request is from a crawler (agent string or `_escaped_fragment_`)
 	2. The middleware checks to make sure we aren't requesting a resource (js, css, etc...)
 	3. (optional) The middleware checks to make sure the url is in the whitelist
 	4. (optional) The middleware checks to make sure the url isn't in the blacklist
@@ -83,11 +85,11 @@ This may be useful for your local development environment.
 
 You can publish the config file with:
 
-```bash
+```shell
 php artisan vendor:publish --provider="CodebarAg\LaravelPrerender\LaravelPrerenderServiceProvider"
 ```
 
-Afterwards you can customize the Whiteliste/Blacklist on your own.
+Afterwards you can customize the Whitelist/Blacklist on your own.
 
 ### 🤍 Whitelist
 
@@ -116,6 +118,59 @@ Note that this is the full request URI, so including starting slash and query pa
     '/api/*' // do not prerender pages starting with '/api/'
 ],
 ```
+
+## 🚧 Local testing
+
+> Based on the [Getting started](https://docs.prerender.io/article/15-getting-started)
+> guide in the Prerender.io documentation.
+
+1. Download and run the prerender Server locally
+```shell
+git clone https://github.com/prerender/prerender.git
+cd prerender
+npm clean-install
+node server.js
+```
+
+The default port is 3000. You can start the node server on a different port
+like this:
+
+```shell
+PORT=3333 node server.js
+```
+
+2. Set the prerender URL:
+
+```dotenv
+PRERENDER_URL=http://localhost:3000
+```
+
+3. (Optional) Open your browser and visit the following URL. Make sure to
+   change `domain.test` to your local domain:
+
+```
+http://localhost:3000/render?url=https://domain.test
+```
+
+4. Add the `PrerenderMiddleware` to the `web.php` file. We use 
+   [Inertia](https://inertiajs.com) in this example:
+
+```php
+use CodebarAg\LaravelPrerender\PrerenderMiddleware;
+
+Route::middleware(PrerenderMiddleware::class)->get('/', function () {
+    return Inertia::render('Welcome');
+});
+```
+
+5. Test your page as a crawler. Make sure to change `domain.test` to your local
+   domain:
+
+```shell
+curl -A Googlebot https://domain.test
+```
+
+6. 🎉 You made it. You should see your prerendered html!
 
 ## 📝 Changelog
 
