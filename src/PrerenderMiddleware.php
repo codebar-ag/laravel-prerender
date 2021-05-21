@@ -142,8 +142,10 @@ class PrerenderMiddleware
         }
 
         // prerender if a crawler is detected
-        if (in_array(strtolower($userAgent), $this->crawlerUserAgents)) {
-            $isRequestingPrerenderedPage = true;
+        foreach ($this->crawlerUserAgents as $crawlerUserAgent) {
+            if (Str::contains($userAgent, strtolower($crawlerUserAgent))) {
+                $isRequestingPrerenderedPage = true;
+            }
         }
 
         if ($bufferAgent) {
