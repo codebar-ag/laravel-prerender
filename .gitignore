@@ -7,4 +7,5 @@ coverage
 docs
 vendor
 .php_cs.cache
+.php-cs-fixer.cache
 coverage.xml
