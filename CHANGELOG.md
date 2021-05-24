@@ -2,7 +2,9 @@
 
 All notable changes to `laravel-prerender` will be documented in this file.
 
-## Not released
+## 3.1.1 - 2021-05-21
+
+- Fix bug causing the middleware to never work https://github.com/codebar-ag/laravel-prerender/pull/25
 
 ## 3.1.0 - 2021-04-28
 
