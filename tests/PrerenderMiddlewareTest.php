@@ -32,6 +32,14 @@ class PrerenderMiddlewareTest extends TestCase
     }
 
     /** @test */
+    public function it_should_prerender_when_user_agent_is_part_of_crawler_user_agents()
+    {
+        $this->get('/test-middleware', ['User-Agent' => 'Googlebot/2.1 (+http://www.google.com/bot.html)',])
+            ->assertHeader('prerender.io-mock', true)
+            ->assertSuccessful();
+    }
+
+    /** @test */
     public function it_should_prerender_page_with_url_in_whitelist()
     {
         config()->set('prerender.whitelist', ['/test-middleware*']);
