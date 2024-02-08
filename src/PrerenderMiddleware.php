@@ -102,7 +102,7 @@ class PrerenderMiddleware
             if ($prerenderedResponse) {
                 $statusCode = $prerenderedResponse->getStatusCode();
 
-                if (! $this->returnSoftHttpCodes && $statusCode >= 300 && $statusCode < 400) {
+                if (!$this->returnSoftHttpCodes && $statusCode >= 300 && $statusCode < 400) {
                     $headers = $prerenderedResponse->getHeaders();
 
                     return Redirect::to(array_change_key_case($headers, CASE_LOWER)['location'][0], $statusCode);
@@ -128,11 +128,11 @@ class PrerenderMiddleware
 
         $isRequestingPrerenderedPage = false;
 
-        if (! $userAgent) {
+        if (!$userAgent) {
             return false;
         }
 
-        if (! $request->isMethod('GET')) {
+        if (!$request->isMethod('GET')) {
             return false;
         }
 
@@ -152,13 +152,13 @@ class PrerenderMiddleware
             $isRequestingPrerenderedPage = true;
         }
 
-        if (! $isRequestingPrerenderedPage) {
+        if (!$isRequestingPrerenderedPage) {
             return false;
         }
 
         // only check whitelist if it is not empty
         if ($this->whitelist) {
-            if (! $this->isListed($requestUri, $this->whitelist)) {
+            if (!$this->isListed($requestUri, $this->whitelist)) {
                 return false;
             }
         }
@@ -207,7 +207,7 @@ class PrerenderMiddleware
 
             return $this->client->get($this->prerenderUri.'/'.urlencode($protocol.'://'.$host.'/'.$path), compact('headers'));
         } catch (RequestException $exception) {
-            if (! $this->returnSoftHttpCodes && ! empty($exception->getResponse()) && $exception->getResponse()->getStatusCode() === 404) {
+            if (!$this->returnSoftHttpCodes && !empty($exception->getResponse()) && $exception->getResponse()->getStatusCode() === 404) {
                 abort(404);
             }
 
