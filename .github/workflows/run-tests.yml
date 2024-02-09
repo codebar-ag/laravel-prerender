@@ -14,10 +14,18 @@ jobs:
       max-parallel: 1
       matrix:
         os: [ ubuntu-latest, windows-latest ]
-        php: [ 8.2, 8.3 ]
-        laravel: [ 10.* ]
+        php: [ 7.2, 7.3, 7.4, 8.0, 8.2, 8.3 ]
+        laravel: [ 6, 7, 8, 9, 10.* ]
         stability: [ prefer-lowest, prefer-stable ]
         include:
+          - laravel: 6.*
+            testbench: 4.*
+          - laravel: 7.*
+            testbench: 5.*
+          - laravel: 8.*
+            testbench: 6.*
+          - laravel: 9.*
+            testbench: 7.*
           - laravel: 10.*
             testbench: 8.*
 
