@@ -93,7 +93,7 @@ jobs:
         run: cp phpunit.xml.dist phpunit.xml
 
       - name: Execute tests
-        run: vendor/bin/pest
+        run: vendor/bin/phpunit
 
       - name: Store test reports
         uses: actions/upload-artifact@v2
