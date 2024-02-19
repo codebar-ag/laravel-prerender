@@ -22,7 +22,7 @@ class TestCase extends \Orchestra\Testbench\TestCase
     }
 
     /**
-     * @param Application $app
+     * @param  Application  $app
      */
     protected function getPackageProviders($app): array
     {
@@ -32,7 +32,7 @@ class TestCase extends \Orchestra\Testbench\TestCase
     }
 
     /**
-     * @param Application $app
+     * @param  Application  $app
      */
     protected function getEnvironmentSetUp($app): void
     {

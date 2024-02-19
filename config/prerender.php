@@ -132,7 +132,7 @@ return [
         '*.ttf',
         '*.otf',
         '*.woff',
-        '*.woff2'
+        '*.woff2',
     ],
 
     /*
@@ -178,7 +178,7 @@ return [
         'nuzzel',
         'Discordbot',
         'Google Page Speed',
-        'Qwantify'
+        'Qwantify',
     ],
 
 ];
