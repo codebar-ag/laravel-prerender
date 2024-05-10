@@ -2,6 +2,8 @@
 
 namespace CodebarAg\LaravelPrerender\Tests;
 
+use GuzzleHttp\Client;
+
 class PrerenderMiddlewareTest extends TestCase
 {
     /** @test */
@@ -74,6 +76,20 @@ class PrerenderMiddlewareTest extends TestCase
     public function it_should_not_prerender_page_when_missing_user_agent()
     {
         $this->get('/test-middleware', ['User-Agent' => null])
+            ->assertHeaderMissing('prerender.io-mock')
+            ->assertSee('GET - Success');
+    }
+
+    /** @test */
+    public function it_should_not_prerender_page_if_request_times_out()
+    {
+        $this->app->bind(Client::class, function () {
+            return $this->createMockTimeoutClient();
+        });
+
+        $this->allowSymfonyUserAgent();
+
+        $this->get('/test-middleware')
             ->assertHeaderMissing('prerender.io-mock')
             ->assertSee('GET - Success');
     }
