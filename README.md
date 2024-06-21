@@ -276,6 +276,21 @@ return [
         'Qwantify'
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Timeout
+    |--------------------------------------------------------------------------
+    |
+    | Specifies the Guzzle request timeout in seconds. If the request for a
+    | prerendered page takes longer than this, the request will be terminated
+    | and the page will be loaded without prerender. A value of 0 means no
+    | timeout.
+    |
+    | See: https://docs.guzzlephp.org/en/stable/request-options.html#timeout
+    |
+    */
+    'timeout' => env('PRERENDER_TIMEOUT', 0),
+
 ];
 ```
 

@@ -4,6 +4,7 @@ namespace CodebarAg\LaravelPrerender;
 
 use Closure;
 use GuzzleHttp\Client as Guzzle;
+use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\RequestException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
@@ -71,14 +72,14 @@ class PrerenderMiddleware
     {
         $this->returnSoftHttpCodes = config('prerender.prerender_soft_http_codes');
 
-        if ($this->returnSoftHttpCodes) {
-            $this->client = $client;
-        } else {
-            // Workaround to avoid following redirects
-            $config = $client->getConfig();
-            $config['allow_redirects'] = false;
-            $this->client = new Guzzle($config);
+        $guzzleConfig = $client->getConfig();
+        $guzzleConfig['timeout'] = config('prerender.timeout');
+
+        if (!$this->returnSoftHttpCodes) {
+            $guzzleConfig['allow_redirects'] = false;
         }
+
+        $this->client = new Guzzle($guzzleConfig);
 
         $config = config('prerender');
 
@@ -102,7 +103,7 @@ class PrerenderMiddleware
             if ($prerenderedResponse) {
                 $statusCode = $prerenderedResponse->getStatusCode();
 
-                if (! $this->returnSoftHttpCodes && $statusCode >= 300 && $statusCode < 400) {
+                if (!$this->returnSoftHttpCodes && $statusCode >= 300 && $statusCode < 400) {
                     $headers = $prerenderedResponse->getHeaders();
 
                     return Redirect::to(array_change_key_case($headers, CASE_LOWER)['location'][0], $statusCode);
@@ -128,11 +129,11 @@ class PrerenderMiddleware
 
         $isRequestingPrerenderedPage = false;
 
-        if (! $userAgent) {
+        if (!$userAgent) {
             return false;
         }
 
-        if (! $request->isMethod('GET')) {
+        if (!$request->isMethod('GET')) {
             return false;
         }
 
@@ -152,13 +153,13 @@ class PrerenderMiddleware
             $isRequestingPrerenderedPage = true;
         }
 
-        if (! $isRequestingPrerenderedPage) {
+        if (!$isRequestingPrerenderedPage) {
             return false;
         }
 
         // only check whitelist if it is not empty
         if ($this->whitelist) {
-            if (! $this->isListed($requestUri, $this->whitelist)) {
+            if (!$this->isListed($requestUri, $this->whitelist)) {
                 return false;
             }
         }
@@ -207,19 +208,21 @@ class PrerenderMiddleware
 
             return $this->client->get($this->prerenderUri.'/'.urlencode($protocol.'://'.$host.'/'.$path), compact('headers'));
         } catch (RequestException $exception) {
-            if (! $this->returnSoftHttpCodes && ! empty($exception->getResponse()) && $exception->getResponse()->getStatusCode() === 404) {
+            if (!$this->returnSoftHttpCodes && !empty($exception->getResponse()) && $exception->getResponse()->getStatusCode() === 404) {
                 abort(404);
             }
-
-            // In case of an exception, we only throw the exception if we are in debug mode. Otherwise,
-            // we return null and the handle() method will just pass the request to the next middleware
-            // and we do not show a prerendered page.
-            if (config('app.debug')) {
-                throw $exception;
-            }
-
-            return null;
+        } catch (ConnectException $exception) {
+            //
         }
+
+        // In case of an exception, we only throw the exception if we are in debug mode. Otherwise,
+        // we return null and the handle() method will just pass the request to the next middleware
+        // and we do not show a prerendered page.
+        if (config('app.debug')) {
+            throw $exception;
+        }
+
+        return null;
     }
 
     /**

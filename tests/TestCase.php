@@ -5,8 +5,10 @@ namespace CodebarAg\LaravelPrerender\Tests;
 use CodebarAg\LaravelPrerender\LaravelPrerenderServiceProvider;
 use CodebarAg\LaravelPrerender\PrerenderMiddleware;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Http\Kernel;
@@ -47,6 +49,17 @@ class TestCase extends \Orchestra\Testbench\TestCase
 
             return new Client(['handler' => $stack]);
         });
+    }
+
+    protected function createMockTimeoutClient(): Client
+    {
+        $mock = new MockHandler([
+            new ConnectException('Could not connect', new Request('GET', 'test')),
+        ]);
+
+        $stack = HandlerStack::create($mock);
+
+        return new Client(['handler' => $stack]);
     }
 
     protected function setupRoutes(): void
