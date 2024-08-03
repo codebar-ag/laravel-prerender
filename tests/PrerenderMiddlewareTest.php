@@ -94,6 +94,21 @@ class PrerenderMiddlewareTest extends TestCase
             ->assertSee('GET - Success');
     }
 
+    /** @test */
+    public function it_sends_full_query_string_to_prerender()
+    {
+        $this->app->bind(Client::class, function () {
+            return $this->createMockUrlTrackingClient();
+        });
+
+        $this->allowSymfonyUserAgent();
+
+        $this->get('/test-middleware?withQueryParam=true')
+            ->assertHeader('prerender.io-mock', true)
+            ->assertSuccessful()
+            ->assertSee(urlencode('/test-middleware?withQueryParam=true'));
+    }
+
     private function allowSymfonyUserAgent()
     {
         config()->set('prerender.crawler_user_agents', ['symfony']);
