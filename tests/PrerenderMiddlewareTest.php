@@ -95,7 +95,7 @@ class PrerenderMiddlewareTest extends TestCase
     }
 
     /** @test */
-    public function it_sends_full_query_string_to_prerender()
+    public function it_does_not_send_query_strings_to_prerender_by_default()
     {
         $this->app->bind(Client::class, function () {
             return $this->createMockUrlTrackingClient();
@@ -106,11 +106,33 @@ class PrerenderMiddlewareTest extends TestCase
         $this->get('/test-middleware?withQueryParam=true')
             ->assertHeader('prerender.io-mock', true)
             ->assertSuccessful()
+            ->assertSee(urlencode('/test-middleware'))
+            ->assertDontSee('withQueryParam');
+    }
+
+    /** @test */
+    public function it_sends_full_query_string_to_prerender()
+    {
+        $this->app->bind(Client::class, function () {
+            return $this->createMockUrlTrackingClient();
+        });
+
+        $this->allowSymfonyUserAgent();
+        $this->allowQueryParams();
+
+        $this->get('/test-middleware?withQueryParam=true')
+            ->assertHeader('prerender.io-mock', true)
+            ->assertSuccessful()
             ->assertSee(urlencode('/test-middleware?withQueryParam=true'));
     }
 
     private function allowSymfonyUserAgent()
     {
         config()->set('prerender.crawler_user_agents', ['symfony']);
+    }
+
+    private function allowQueryParams()
+    {
+        config()->set('prerender.full_url', true);
     }
 }

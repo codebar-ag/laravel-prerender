@@ -289,7 +289,21 @@ return [
     | See: https://docs.guzzlephp.org/en/stable/request-options.html#timeout
     |
     */
+
     'timeout' => env('PRERENDER_TIMEOUT', 0),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Timeout
+    |--------------------------------------------------------------------------
+    |
+    | By default, request query parameters are not sent to prerender when
+    | requesting the prerendered page. Setting this to true will cause the full
+    | URL, including query parameters, to be sent to prerender.
+    |
+    */
+
+    'full_url' => env('PRERENDER_FULL_URL', false),
 
 ];
 ```
