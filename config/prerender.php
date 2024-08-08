@@ -199,7 +199,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Timeout
+    | Query Parameters
     |--------------------------------------------------------------------------
     |
     | By default, request query parameters are not sent to prerender when
