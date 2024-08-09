@@ -66,6 +66,13 @@ class PrerenderMiddleware
     private $returnSoftHttpCodes;
 
     /**
+     * Send the full request URL to prerender.
+     *
+     * @var bool
+     */
+    private $useFullURL;
+
+    /**
      * Creates a new PrerenderMiddleware instance.
      */
     public function __construct(Guzzle $client)
@@ -88,6 +95,7 @@ class PrerenderMiddleware
         $this->prerenderToken = $config['prerender_token'];
         $this->whitelist = $config['whitelist'];
         $this->blacklist = $config['blacklist'];
+        $this->useFullURL = $config['full_url'];
     }
 
     /**
@@ -195,18 +203,10 @@ class PrerenderMiddleware
             $headers['X-Prerender-Token'] = $this->prerenderToken;
         }
 
-        $protocol = $request->isSecure() ? 'https' : 'http';
-
         try {
-            // Return the Guzzle Response
-            $host = $request->getHost();
-            $path = $request->Path();
-            // Fix "//" 404 error
-            if ($path === '/') {
-                $path = '';
-            }
+            $url = $this->generatePrerenderUrl($request);
 
-            return $this->client->get($this->prerenderUri.'/'.urlencode($protocol.'://'.$host.'/'.$path), compact('headers'));
+            return $this->client->get($this->prerenderUri.'/'.urlencode($url), compact('headers'));
         } catch (RequestException $exception) {
             if (!$this->returnSoftHttpCodes && !empty($exception->getResponse()) && $exception->getResponse()->getStatusCode() === 404) {
                 abort(404);
@@ -249,5 +249,27 @@ class PrerenderMiddleware
         }
 
         return false;
+    }
+
+    /**
+     * Generate the request URL to send to prerender. When useFullURL is false, the legacy URL
+     * generation logic is used
+     */
+    private function generatePrerenderUrl(Request $request): string
+    {
+        if ($this->useFullURL) {
+            return $request->fullUrl();
+        }
+
+        $protocol = $request->isSecure() ? 'https' : 'http';
+        $host = $request->getHost();
+        $path = $request->Path();
+
+        // Fix "//" 404 error
+        if ($path === '/') {
+            $path = '';
+        }
+
+        return $protocol.'://'.$host.'/'.$path;
     }
 }

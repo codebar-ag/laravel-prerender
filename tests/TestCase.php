@@ -13,6 +13,7 @@ use GuzzleHttp\Psr7\Response;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Http\Kernel;
 use Illuminate\Support\Facades\Route;
+use Psr\Http\Message\RequestInterface;
 
 class TestCase extends \Orchestra\Testbench\TestCase
 {
@@ -55,6 +56,23 @@ class TestCase extends \Orchestra\Testbench\TestCase
     {
         $mock = new MockHandler([
             new ConnectException('Could not connect', new Request('GET', 'test')),
+        ]);
+
+        $stack = HandlerStack::create($mock);
+
+        return new Client(['handler' => $stack]);
+    }
+
+    protected function createMockUrlTrackingClient(): Client
+    {
+        $mock = new MockHandler([
+            function (RequestInterface $request) {
+                return new Response(
+                    200,
+                    ['prerender.io-mock' => true],
+                    (string) $request->getUri()
+                );
+            },
         ]);
 
         $stack = HandlerStack::create($mock);
