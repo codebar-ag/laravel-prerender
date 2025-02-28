@@ -10,23 +10,23 @@ use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
-use Illuminate\Foundation\Application;
+use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Foundation\Http\Kernel;
 use Illuminate\Support\Facades\Route;
+use Orchestra\Testbench\TestCase as Orchestra;
 use Psr\Http\Message\RequestInterface;
 
-class TestCase extends \Orchestra\Testbench\TestCase
+class TestCase extends Orchestra
 {
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->setupRoutes();
+        Factory::guessFactoryNamesUsing(
+            fn (string $modelName) => 'CodebarAg\\LaravelPrerender\\Database\\Factories\\'.class_basename($modelName).'Factory',
+        );
     }
 
-    /**
-     * @param  Application  $app
-     */
     protected function getPackageProviders($app): array
     {
         return [
@@ -34,11 +34,15 @@ class TestCase extends \Orchestra\Testbench\TestCase
         ];
     }
 
-    /**
-     * @param  Application  $app
-     */
-    protected function getEnvironmentSetUp($app): void
+    public function getEnvironmentSetUp($app): void
     {
+        $app['config']->set('database.default', 'sqlite');
+        $app['config']->set('database.connections.sqlite', [
+            'driver' => 'sqlite',
+            'database' => ':memory:',
+            'prefix' => '',
+        ]);
+
         $app->make(Kernel::class)->prependMiddleware(PrerenderMiddleware::class);
 
         // mock guzzle client
