@@ -2,42 +2,34 @@ name: run-tests
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
   pull_request:
-    branches:
-      - main
+    branches: [ main ]
 
 jobs:
   test:
     runs-on: ${{ matrix.os }}
-
     strategy:
       fail-fast: true
       max-parallel: 1
       matrix:
-        os: [ubuntu-latest, windows-latest]
-        php: [8.2, 8.3]
-        laravel: ['11.*', '12.*']
-        stability: [prefer-lowest, prefer-stable]
-        include:
-          - laravel: 11.*
-            testbench: 9.*
-          - laravel: 12.*
-            testbench: 10.*
+        os: [ ubuntu-latest ]
+        php: [ 8.2, 8.3, 8.4 ]
+        laravel: [ 12.* ]
+        stability: [ prefer-lowest, prefer-stable ]
 
     name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.stability }} - ${{ matrix.os }}
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
           extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, imagick, fileinfo
-          coverage: xdebug
+          coverage: none
 
       - name: Setup problem matchers
         run: |
@@ -46,19 +38,18 @@ jobs:
 
       - name: Install dependencies
         run: |
-          composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --dev --no-interaction --no-update
-          composer update --${{ matrix.stability }} --prefer-dist --no-interaction --no-suggest
+          composer require "laravel/framework:${{ matrix.laravel }}" --no-interaction --no-update
+          composer update --${{ matrix.stability }} --prefer-dist --no-interaction
 
-      - name: Set phpunit.xml
+      - name: Execute tests
         run: cp phpunit.xml.dist phpunit.xml
 
       - name: Execute tests
-        run: vendor/bin/phpunit
+        run: vendor/bin/pest
 
-      - name: Store test reports
-        uses: actions/upload-artifact@v2
+      - name: Store Log Artifacts
+        if: failure()
+        uses: actions/upload-artifact@v4
         with:
-          name: Store report
-          retention-days: 1
-          path: |
-            ./reports
+          name: Store report artifacts
+          path: ./vendor/orchestra/testbench-core/laravel/storage/logs
