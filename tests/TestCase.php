@@ -3,6 +3,7 @@
 namespace CodebarAg\LaravelPrerender\Tests;
 
 use CodebarAg\LaravelPrerender\LaravelPrerenderServiceProvider;
+use CodebarAg\LaravelPrerender\PrerenderMiddleware;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Handler\MockHandler;
@@ -10,6 +11,7 @@ use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Foundation\Http\Kernel;
 use Illuminate\Support\Facades\Route;
 use Orchestra\Testbench\TestCase as Orchestra;
 use Psr\Http\Message\RequestInterface;
@@ -40,6 +42,18 @@ class TestCase extends Orchestra
             'database' => ':memory:',
             'prefix' => '',
         ]);
+
+        $app->make(Kernel::class)->prependMiddleware(PrerenderMiddleware::class);
+
+        // mock guzzle client
+        $app->bind(Client::class, function () {
+            $mock = new MockHandler([
+                new Response(200, ['prerender.io-mock' => true]),
+            ]);
+            $stack = HandlerStack::create($mock);
+
+            return new Client(['handler' => $stack]);
+        });
     }
 
     protected function createMockTimeoutClient(): Client
