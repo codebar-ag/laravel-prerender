@@ -1,7 +1,8 @@
 <?php
 
-namespace CodebarAg\LaravelPrerender\Tests;
+namespace CodebarAg\LaravelPrerender\Tests\Feature;
 
+use CodebarAg\LaravelPrerender\Tests\TestCase;
 use GuzzleHttp\Client;
 
 class PrerenderMiddlewareTest extends TestCase
