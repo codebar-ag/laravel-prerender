@@ -79,6 +79,7 @@ class PrerenderMiddleware
     {
         $this->returnSoftHttpCodes = config('prerender.prerender_soft_http_codes');
 
+        // @phpstan-ignore-next-line
         $guzzleConfig = $client->getConfig();
         $guzzleConfig['timeout'] = config('prerender.timeout');
 
