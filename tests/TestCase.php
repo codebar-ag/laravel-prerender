@@ -11,39 +11,39 @@ use Orchestra\Testbench\TestCase as Orchestra;
 
 class TestCase extends Orchestra
 {
-	protected function getPackageProviders($app): array
-	{
-		return [
-			LaravelPrerenderServiceProvider::class,
-		];
-	}
+    protected function getPackageProviders($app): array
+    {
+        return [
+            LaravelPrerenderServiceProvider::class,
+        ];
+    }
 
-	public function getEnvironmentSetUp($app): void
-	{
-		$app['config']->set('database.default', 'sqlite');
-		$app['config']->set('database.connections.sqlite', [
-			'driver' => 'sqlite',
-			'database' => ':memory:',
-			'prefix' => '',
-		]);
+    public function getEnvironmentSetUp($app): void
+    {
+        $app['config']->set('database.default', 'sqlite');
+        $app['config']->set('database.connections.sqlite', [
+            'driver' => 'sqlite',
+            'database' => ':memory:',
+            'prefix' => '',
+        ]);
 
-		$app->make(Kernel::class)->prependMiddleware(PrerenderMiddleware::class);
+        $app->make(Kernel::class)->prependMiddleware(PrerenderMiddleware::class);
 
-		$this->setupRoutes();
+        $this->setupRoutes();
 
-		$app->bind(Client::class, function () {
-			return createMockPrerenderClient();
-		});
-	}
+        $app->bind(Client::class, function () {
+            return createMockPrerenderClient();
+        });
+    }
 
-	protected function setupRoutes(): void
-	{
-		Route::get('test-middleware', function () {
-			return response('GET - Success')->header('Content-Type', 'text/plain');
-		});
+    protected function setupRoutes(): void
+    {
+        Route::get('test-middleware', function () {
+            return response('GET - Success')->header('Content-Type', 'text/plain');
+        });
 
-		Route::post('test-middleware', function () {
-			return response('Success')->header('Content-Type', 'text/plain');
-		});
-	}
+        Route::post('test-middleware', function () {
+            return response('Success')->header('Content-Type', 'text/plain');
+        });
+    }
 }
