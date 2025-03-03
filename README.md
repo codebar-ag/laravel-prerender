@@ -1,16 +1,16 @@
 <img src="https://banners.beyondco.de/Laravel%20Prerender.png?theme=light&packageManager=composer+require&packageName=codebar-ag%2Flaravel-prerender&pattern=circuitBoard&style=style_2&description=Integrate+Prerender.io+with+Laravel&md=1&showWatermark=0&fontSize=175px&images=template&widths=500&heights=500">
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/codebar-ag/laravel-prerender.svg?style=flat-square)](https://packagist.org/packages/codebar-ag/laravel-prerender)
+[![GitHub-Tests](https://github.com/codebar-ag/laravel-prerender/actions/workflows/run-tests.yml/badge.svg?branch=main)](https://github.com/codebar-ag/laravel-prerender/actions/workflows/run-tests.yml)
+[![GitHub Code Style](https://github.com/codebar-ag/laravel-prerender/actions/workflows/fix-php-code-style-issues.yml/badge.svg?branch=main)](https://github.com/codebar-ag/laravel-prerender/actions/workflows/fix-php-code-style-issues.yml)
 [![Total Downloads](https://img.shields.io/packagist/dt/codebar-ag/laravel-prerender.svg?style=flat-square)](https://packagist.org/packages/codebar-ag/laravel-prerender)
-[![run-tests](https://github.com/codebar-ag/laravel-prerender/actions/workflows/run-tests.yml/badge.svg)](https://github.com/codebar-ag/laravel-prerender/actions/workflows/run-tests.yml)
-[![Check & fix styling](https://github.com/codebar-ag/laravel-prerender/actions/workflows/php-cs-fixer.yml/badge.svg)](https://github.com/codebar-ag/laravel-prerender/actions/workflows/php-cs-fixer.yml)
 
 This package was developed to give you a quick start to integrate with the
 Prerender.io service in your Laravel application.
 
 ## 🙇 Credits
 
-This package is a clone from [jeroennoten/Laravel-Prerender](https://github.com/jeroennoten/Laravel-Prerender)
+This package is a clone from [jeroennoten/laravel-prerender](https://github.com/jeroennoten/Laravel-Prerender)
 with [jeroennoten](https://github.com/jeroennoten) as the original author. 
 [CasperLaiTW](https://github.com/CasperLaiTW) provided Laravel 6,7 & 8 
 compatibility by an unmerged (14th September 2020) Pull-Request.
@@ -32,7 +32,8 @@ using Prerender.io since the response always goes through your server.
 
 | Package |     PHP     | Laravel | Prerender.io access |
 |:-------:|:-----------:|:-------:|:-------------------:|
-|  main   | ^8.2 - ^8.3 |  11.x   |          ✅          |
+| v12.0.0 | ^8.2 - ^8.4 |  12.x   |          ✅          |
+| v11.0.0 | ^8.2 - ^8.3 |  11.x   |          ✅          |
 | v3.3.0  | ^8.1 - ^8.3 |  10.x   |          ✅          |
 | v3.2.0  | ^8.0 - ^8.2 |   9.x   |          ✅          |
 | v3.1.1  | ^7.3 - ^8.1 |   8.x   |          ✅          |

@@ -10,10 +10,14 @@
     "license": "MIT",
     "authors": [
         {
-            "name": "Sebastian Fix",
-            "email": "sebastian.fix@codebar.ch",
+            "name": "Sebastian Bürgin-Fix",
+            "email": "sebastian.buergin@buergin.ch",
             "homepage": "https://www.codebar.ch",
-            "role": "Developer"
+            "role": "Sofware-Engineer"
+        },
+        {
+            "name": "Rhys Lees",
+            "role": "Software-Engineer"
         },
         {
             "name": "Casper Lai",
@@ -28,15 +32,20 @@
         }
     ],
     "require": {
-        "php": "^8.2|^8.3",
+        "php": "8.2.*|8.3.*|8.4.*",
         "guzzlehttp/guzzle": "^7.8",
-        "illuminate/support": "^11.0|^12.0",
+        "illuminate/contracts": "^12.0",
         "symfony/psr-http-message-bridge": "^7.0"
     },
     "require-dev": {
-        "friendsofphp/php-cs-fixer": "^3.50",
-        "orchestra/testbench": "^9.0|^10.0",
-        "phpunit/phpunit": "^10.5|^11.5.3"
+        "laravel/pint": "^1.21",
+        "larastan/larastan": "^v3.1",
+        "orchestra/testbench": "^10.0",
+        "pestphp/pest": "^3.7",
+        "phpstan/extension-installer": "^1.4",
+        "phpstan/phpstan-deprecation-rules": "^2.0",
+        "phpstan/phpstan-phpunit": "^2.0",
+        "spatie/laravel-ray": "^1.39"
     },
     "autoload": {
         "psr-4": {
@@ -56,7 +65,8 @@
     "config": {
         "sort-packages": true,
         "allow-plugins": {
-            "pestphp/pest-plugin": true
+            "pestphp/pest-plugin": true,
+            "phpstan/extension-installer": true
         }
     },
     "extra": {
