@@ -1,139 +1,92 @@
 <?php
 
-namespace CodebarAg\LaravelPrerender\Tests\Feature;
+test('it should prerender page on get request', function () {
+    allowSymfonyUserAgent();
 
-use CodebarAg\LaravelPrerender\Tests\TestCase;
-use GuzzleHttp\Client;
+    $this->get('/test-middleware')
+        ->assertHeader('prerender.io-mock', true)
+        ->assertSuccessful();
+});
 
-class PrerenderMiddlewareTest extends TestCase
-{
-    /** @test */
-    public function it_should_prerender_page_on_get_request()
-    {
-        $this->allowSymfonyUserAgent();
+test('it should not prerender page when user agent does not in list', function () {
+    $this->get('/test-middleware')
+        ->assertHeaderMissing('prerender.io-mock')
+        ->assertSee('GET - Success');
+});
 
-        $this->get('/test-middleware')
-            ->assertHeader('prerender.io-mock', true)
-            ->assertSuccessful();
-    }
+test('it should prerender page with escaped fragment in query string', function () {
+    $this->get('/test-middleware?_escaped_fragment_')
+        ->assertHeader('prerender.io-mock', true)
+        ->assertSuccessful();
+});
 
-    /** @test */
-    public function it_should_not_prerender_page_when_user_agent_does_not_in_list()
-    {
-        $this->get('/test-middleware')
-            ->assertSuccessful()
-            ->assertHeaderMissing('prerender.io-mock')
-            ->assertSee('GET - Success');
-    }
+test('it should prerender when user agent is part of crawler user agents', function () {
+    $this->get('/test-middleware', ['User-Agent' => 'Googlebot/2.1 (+http://www.google.com/bot.html)'])
+        ->assertHeader('prerender.io-mock', true)
+        ->assertSuccessful();
+});
 
-    /** @test */
-    public function it_should_prerender_page_with_escaped_fragment_in_query_string()
-    {
-        $this->get('/test-middleware?_escaped_fragment_')
-            ->assertHeader('prerender.io-mock', true)
-            ->assertSuccessful();
-    }
+test('it should prerender page with url in whitelist', function () {
+    config()->set('prerender.whitelist', ['/test-middleware*']);
 
-    /** @test */
-    public function it_should_prerender_when_user_agent_is_part_of_crawler_user_agents()
-    {
-        $this->get('/test-middleware', ['User-Agent' => 'Googlebot/2.1 (+http://www.google.com/bot.html)'])
-            ->assertHeader('prerender.io-mock', true)
-            ->assertSuccessful();
-    }
+    $this->get('/test-middleware?_escaped_fragment_')
+        ->assertHeader('prerender.io-mock', true)
+        ->assertSuccessful();
+});
 
-    /** @test */
-    public function it_should_prerender_page_with_url_in_whitelist()
-    {
-        config()->set('prerender.whitelist', ['/test-middleware*']);
+test('it should not prerender page in blacklist', function () {
+    config()->set('prerender.blacklist', ['/test-middleware*']);
 
-        $this->get('/test-middleware?_escaped_fragment_')
-            ->assertHeader('prerender.io-mock', true)
-            ->assertSuccessful();
-    }
+    $this->get('/test-middleware?_escaped_fragment_')
+        ->assertSuccessful()
+        ->assertHeaderMissing('prerender.io-mock')
+        ->assertSee('GET - Success');
+});
 
-    /** @test */
-    public function is_should_not_prerender_page_in_blacklist()
-    {
-        config()->set('prerender.blacklist', ['/test-middleware*']);
+test('it should not prerender page on non-get request', function () {
+    allowSymfonyUserAgent();
 
-        $this->get('/test-middleware?_escaped_fragment_')
-            ->assertSuccessful()
-            ->assertHeaderMissing('prerender.io-mock')
-            ->assertSee('GET - Success');
-    }
+    $this->post('/test-middleware')
+        ->assertSuccessful()
+        ->assertSee('Success');
+});
 
-    /** @test */
-    public function it_should_not_prerender_page_on_non_get_request()
-    {
-        $this->allowSymfonyUserAgent();
+test('it should not prerender page when missing user agent', function () {
+    $this->get('/test-middleware', ['User-Agent' => null])
+        ->assertHeaderMissing('prerender.io-mock')
+        ->assertSee('GET - Success');
+});
 
-        $this->post('/test-middleware')
-            ->assertSuccessful()
-            ->assertSee('Success');
-    }
+test('it should not prerender page if request times out', function () {
+    $this->app->bind(\GuzzleHttp\Client::class, fn () => createMockTimeoutClient());
 
-    /** @test */
-    public function it_should_not_prerender_page_when_missing_user_agent()
-    {
-        $this->get('/test-middleware', ['User-Agent' => null])
-            ->assertHeaderMissing('prerender.io-mock')
-            ->assertSee('GET - Success');
-    }
+    allowSymfonyUserAgent();
 
-    /** @test */
-    public function it_should_not_prerender_page_if_request_times_out()
-    {
-        $this->app->bind(Client::class, function () {
-            return $this->createMockTimeoutClient();
-        });
+    $this->get('/test-middleware')
+        ->assertHeaderMissing('prerender.io-mock')
+        ->assertSee('GET - Success');
+});
 
-        $this->allowSymfonyUserAgent();
+test('it does not send query strings to prerender by default', function () {
+    $this->app->bind(\GuzzleHttp\Client::class, fn () => createMockUrlTrackingClient());
 
-        $this->get('/test-middleware')
-            ->assertHeaderMissing('prerender.io-mock')
-            ->assertSee('GET - Success');
-    }
+    allowSymfonyUserAgent();
 
-    /** @test */
-    public function it_does_not_send_query_strings_to_prerender_by_default()
-    {
-        $this->app->bind(Client::class, function () {
-            return $this->createMockUrlTrackingClient();
-        });
+    $this->get('/test-middleware?withQueryParam=true')
+        ->assertHeader('prerender.io-mock', true)
+        ->assertSuccessful()
+        ->assertSee(urlencode('/test-middleware'))
+        ->assertDontSee('withQueryParam');
+});
 
-        $this->allowSymfonyUserAgent();
+test('it sends full query string to prerender', function () {
+    $this->app->bind(\GuzzleHttp\Client::class, fn () => createMockUrlTrackingClient());
 
-        $this->get('/test-middleware?withQueryParam=true')
-            ->assertHeader('prerender.io-mock', true)
-            ->assertSuccessful()
-            ->assertSee(urlencode('/test-middleware'))
-            ->assertDontSee('withQueryParam');
-    }
+    allowSymfonyUserAgent();
+    allowQueryParams();
 
-    /** @test */
-    public function it_sends_full_query_string_to_prerender()
-    {
-        $this->app->bind(Client::class, function () {
-            return $this->createMockUrlTrackingClient();
-        });
-
-        $this->allowSymfonyUserAgent();
-        $this->allowQueryParams();
-
-        $this->get('/test-middleware?withQueryParam=true')
-            ->assertHeader('prerender.io-mock', true)
-            ->assertSuccessful()
-            ->assertSee(urlencode('/test-middleware?withQueryParam=true'));
-    }
-
-    private function allowSymfonyUserAgent()
-    {
-        config()->set('prerender.crawler_user_agents', ['symfony']);
-    }
-
-    private function allowQueryParams()
-    {
-        config()->set('prerender.full_url', true);
-    }
-}
+    $this->get('/test-middleware?withQueryParam=true')
+        ->assertHeader('prerender.io-mock', true)
+        ->assertSuccessful()
+        ->assertSee(urlencode('/test-middleware?withQueryParam=true'));
+});
