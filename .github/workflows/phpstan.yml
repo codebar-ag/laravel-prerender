@@ -1,21 +1,26 @@
-name: Fix PHP code style issues
+name: PHPStan
 
-on: [push]
+on:
+  push:
+    paths:
+      - '**.php'
+      - 'phpstan.neon.dist'
 
 jobs:
-  php-code-styling:
+  phpstan:
+    name: phpstan
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.head_ref }}
+      - uses: actions/checkout@v4
 
-      - name: Fix PHP code style issues
-        uses: aglipanci/laravel-pint-action@2.5
-
-      - name: Commit changes
-        uses: stefanzweifel/git-auto-commit-action@v5
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
         with:
-          commit_message: Fix styling
+          php-version: '8.4'
+          coverage: none
+
+      - name: Install composer dependencies
+        uses: ramsey/composer-install@v3
+
+      - name: Run PHPStan
+        run: ./vendor/bin/phpstan --error-format=github
