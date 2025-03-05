@@ -1,9 +1,12 @@
 <img src="https://banners.beyondco.de/Laravel%20Prerender.png?theme=light&packageManager=composer+require&packageName=codebar-ag%2Flaravel-prerender&pattern=circuitBoard&style=style_2&description=Integrate+Prerender.io+with+Laravel&md=1&showWatermark=0&fontSize=175px&images=template&widths=500&heights=500">
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/codebar-ag/laravel-prerender.svg?style=flat-square)](https://packagist.org/packages/codebar-ag/laravel-prerender)
+[![Total Downloads](https://img.shields.io/packagist/dt/codebar-ag/laravel-prerender.svg?style=flat-square)](https://packagist.org/packages/codebar-ag/laravel-prerender)
 [![GitHub-Tests](https://github.com/codebar-ag/laravel-prerender/actions/workflows/run-tests.yml/badge.svg?branch=main)](https://github.com/codebar-ag/laravel-prerender/actions/workflows/run-tests.yml)
 [![GitHub Code Style](https://github.com/codebar-ag/laravel-prerender/actions/workflows/fix-php-code-style-issues.yml/badge.svg?branch=main)](https://github.com/codebar-ag/laravel-prerender/actions/workflows/fix-php-code-style-issues.yml)
-[![Total Downloads](https://img.shields.io/packagist/dt/codebar-ag/laravel-prerender.svg?style=flat-square)](https://packagist.org/packages/codebar-ag/laravel-prerender)
+[![PHPStan](https://github.com/codebar-ag/laravel-prerender/actions/workflows/phpstan.yml/badge.svg)](https://github.com/codebar-ag/laravel-prerender/actions/workflows/phpstan.yml)
+[![Dependency Review](https://github.com/codebar-ag/laravel-prerender/actions/workflows/dependency-review.yml/badge.svg)](https://github.com/codebar-ag/laravel-prerender/actions/workflows/dependency-review.yml)
+
 
 This package was developed to give you a quick start to integrate with the
 Prerender.io service in your Laravel application.
