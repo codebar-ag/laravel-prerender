@@ -5,28 +5,12 @@ namespace CodebarAg\LaravelPrerender\Tests;
 use CodebarAg\LaravelPrerender\LaravelPrerenderServiceProvider;
 use CodebarAg\LaravelPrerender\PrerenderMiddleware;
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\ConnectException;
-use GuzzleHttp\Handler\MockHandler;
-use GuzzleHttp\HandlerStack;
-use GuzzleHttp\Psr7\Request;
-use GuzzleHttp\Psr7\Response;
-use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Http\Kernel;
 use Illuminate\Support\Facades\Route;
-use Psr\Http\Message\RequestInterface;
+use Orchestra\Testbench\TestCase as Orchestra;
 
-class TestCase extends \Orchestra\Testbench\TestCase
+class TestCase extends Orchestra
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->setupRoutes();
-    }
-
-    /**
-     * @param  Application  $app
-     */
     protected function getPackageProviders($app): array
     {
         return [
@@ -34,60 +18,32 @@ class TestCase extends \Orchestra\Testbench\TestCase
         ];
     }
 
-    /**
-     * @param  Application  $app
-     */
-    protected function getEnvironmentSetUp($app): void
+    public function getEnvironmentSetUp($app): void
     {
+        $app['config']->set('database.default', 'sqlite');
+        $app['config']->set('database.connections.sqlite', [
+            'driver' => 'sqlite',
+            'database' => ':memory:',
+            'prefix' => '',
+        ]);
+
         $app->make(Kernel::class)->prependMiddleware(PrerenderMiddleware::class);
 
-        // mock guzzle client
+        $this->setupRoutes();
+
         $app->bind(Client::class, function () {
-            $mock = new MockHandler([
-                new Response(200, ['prerender.io-mock' => true]),
-            ]);
-            $stack = HandlerStack::create($mock);
-
-            return new Client(['handler' => $stack]);
+            return createMockPrerenderClient();
         });
-    }
-
-    protected function createMockTimeoutClient(): Client
-    {
-        $mock = new MockHandler([
-            new ConnectException('Could not connect', new Request('GET', 'test')),
-        ]);
-
-        $stack = HandlerStack::create($mock);
-
-        return new Client(['handler' => $stack]);
-    }
-
-    protected function createMockUrlTrackingClient(): Client
-    {
-        $mock = new MockHandler([
-            function (RequestInterface $request) {
-                return new Response(
-                    200,
-                    ['prerender.io-mock' => true],
-                    (string) $request->getUri()
-                );
-            },
-        ]);
-
-        $stack = HandlerStack::create($mock);
-
-        return new Client(['handler' => $stack]);
     }
 
     protected function setupRoutes(): void
     {
         Route::get('test-middleware', function () {
-            return 'GET - Success';
+            return response('GET - Success')->header('Content-Type', 'text/plain');
         });
 
         Route::post('test-middleware', function () {
-            return 'Success';
+            return response('Success')->header('Content-Type', 'text/plain');
         });
     }
 }
